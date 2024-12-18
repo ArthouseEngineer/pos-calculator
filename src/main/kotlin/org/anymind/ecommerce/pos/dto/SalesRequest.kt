@@ -2,7 +2,7 @@ package org.anymind.ecommerce.pos.dto
 
 import java.time.LocalDateTime
 
-data class SalesRequestDto(
+data class SalesRequest(
     val startDateTime: LocalDateTime,
     val endDateTime: LocalDateTime
 )

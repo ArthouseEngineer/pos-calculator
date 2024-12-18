@@ -1,6 +1,54 @@
-GET http://127.0.0.1:8080/actuator
-Accept: application/vnd.spring-boot.actuator.v3+json
+### Calculate for COD
+POST http://localhost:8080/api/calculate
+Content-Type: application/json
 
+{
+  "customerId": "1",
+  "price": 100.00,
+  "paymentMethod": "CASH_ON_DELIVERY",
+  "datetime": "2024-12-18T13:30:00",
+  "additionalItem": {
+    "courier": "YAMATO"
+  }
+}
 
-###
+### Calculate for BANK TRANSFER
+POST http://localhost:8080/api/calculate
+Content-Type: application/json
+
+{
+  "customerId": "1",
+  "price": 100.00,
+  "paymentMethod": "BANK_TRANSFER",
+  "datetime": "2024-12-18T13:00:00",
+  "additionalItem": {
+  "bankDetails": {
+    "bankName": "Bangkok bank",
+    "bankAccount": "123456789"
+    }
+  }
+}
+
+### Calculate for VISA
+POST http://localhost:8080/api/calculate
+Content-Type: application/json
+
+{
+  "customerId": "1",
+  "price": 1000.00,
+  "paymentMethod": "VISA",
+  "datetime": "2024-12-18T16:25:00",
+  "additionalItem": {
+  "last4": "1234"
+  }
+}
+
+### GET SALES REPORT
+POST http://localhost:8080/api/sales
+Content-Type: application/json
+
+{
+    "startDateTime": "2024-12-18T13:00:00",
+    "endDateTime": "2024-12-18T16:30:00"
+}
 

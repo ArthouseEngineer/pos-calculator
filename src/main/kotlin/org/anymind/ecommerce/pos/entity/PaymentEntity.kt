@@ -31,5 +31,5 @@ data class PaymentEntity(
     @Column("created_at")
     val createdAt: LocalDateTime,
 
-    @Transient val paymentMethod: PaymentMethodEntity? = null
+    @Transient val paymentMethodEntity: PaymentMethodEntity? = null
 )

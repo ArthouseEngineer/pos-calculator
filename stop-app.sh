@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PORT="9000"
+PORT="8080"
 if [ -z "$PID" ]; then
   PID=$(lsof -t -i:"$PORT")
 fi

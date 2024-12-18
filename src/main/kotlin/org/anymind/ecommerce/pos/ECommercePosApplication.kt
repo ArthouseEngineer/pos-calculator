@@ -9,3 +9,4 @@ class ECommercePosApplication
 fun main(args: Array<String>) {
     runApplication<ECommercePosApplication>(*args)
 }
+

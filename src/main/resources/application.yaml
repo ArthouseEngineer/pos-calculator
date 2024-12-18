@@ -1,0 +1,24 @@
+server:
+  port: 8080
+  servlet:
+    context-path: "/"
+spring:
+  application:
+    name: payment-system
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/paymentdb?currentSchema=pos_management
+    username: postgres
+    password: password
+  flyway:
+    enabled: true
+    default-schema: pos_management
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    create-schemas: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework: DEBUG
+    org.springframework.web: DEBUG
+    com.fasterxml.jackson: DEBUG

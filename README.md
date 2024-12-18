@@ -1,4 +1,4 @@
-### Candlesticks solution
+# POS Price and points Backend API
 
 ##### How to run tests
 
@@ -7,17 +7,17 @@ Run test:
 
 ##### Run app steps:
 
-- first up docker container from compose file
+- First Up docker container from compose file
 
 ```bash	
 docker-compose up -d --wait
 ```
 
-- second migrate DB if first time run, for DB initialization
+- Second migrate DB if first time run, for DB initialization
 
 ```./gradlew flywayMigrate```
 
-- finally run the app :)
+- Finally run the app :)
 
 ```./gradlew bootRun```
 
@@ -28,35 +28,51 @@ sh stop-app.sh
 docker-compose down
 ```
 
-### Solution explaination
+### Solution explanation
 
-* Project contains helper endpoint - `/most-frequent-isin` that can help us find 
-ISIN with the highest number of quotes in the last specified interval. 
+This API enables e-commerce operations, providing:
+1. **Calculation of prices and reward points** for various payment methods.
+2. **Sales reporting** based on date ranges, with data aggregated hourly.
 
-* You can use Integrated IDEA http-client for make request to endpoints - [isin-request-sender.http](candlesticks-client.http) 
+## **Endpoints Overview**
 
-## So the main task was
+### 1. **Price and Points Calculation**
+- **URL**: `/api/calculate`
+- **Method**: `POST`
+- **Description**: Calculates the final price and reward points based on the payment method, applying validation and rules.
 
-The system only needs to return the candlesticks for the last 30 minutes, including the most recent prices.
-If there weren't any quotes received for more than a minute, instead of missing candlesticks in the 30 minute window, values from the previous candle are reused.
-## Algorithm 
+### 2. **Sales Report Generation**
+- **URL**: `/api/sales/range`
+- **Method**: `POST`
+- **Description**: Returns hourly aggregated sales and points data for a specified date range.
 
-* The main algorithm implemented by the Query in method - `getCandlesticksByInterval`
-[QuoteRepository.java](src/main/java/org/tr/candlesticksolution/repository/QuoteRepository.java)
-* If there are any gaps in candlestick data within the requested time period, they are filled using the last known values from the previous minute. This ensures that each minute has complete candlestick information.
-* If the very first candlestick's information is missing at the start of the time period, the query searches backward in time to find the most recent `candlestick` data. This search is guided by the `firstCandlestickBackFillUntil` parameter, which defaults to 2 hour ago
+For testing these endpoints, you can use Integrated IDEA http-client for make request to endpoints: [**http-client.http**](http-client.http)
 
-You can check work of this algorithm by the Integration test.
+---
 
-## Integration Testing
+## **Request Validation Algorithm**
 
-You can check how the algorithm works by the test in the [QuoteRepositoryIntegrationTest.java](src/test/java/org/tr/candlesticksolution/repository/integration/QuoteRepositoryIntegrationTest.java)
+### **Overview**
+The request validation mechanism ensures that the provided input adheres to the rules defined for each payment method. The validation logic dynamically retrieves and processes rules stored in the database.
 
-* The integration tests for the candlestick data retrieval logic ensure that the application correctly handles various scenarios involving missing data and time intervals.
-One key test case is implemented in the `should_CandlestickHistory_IsStarted_FromDateOfFirstQuote_In_Query_range` method. This test verifies that the candlestick history starts from the date of the first available quote within the query range based.
+### **Validation Workflow**
+1. **Retrieve Validation Rules**:
+    - The `payment_methods` table contains a `validation_rules` JSONB column, which defines the required fields, their types, and custom checks for each payment method.
+    - When a request is received, the system queries the relevant `validation_rules` based on the specified payment method.
 
+2. **Field Presence Check**:
+    - The rules include a list of `requiredFields`. The algorithm iterates through this list and ensures all specified fields exist in the request.
 
-* And the second key test check the `firstCandlestickBackFillUntil` works correctly, and find data for start of Candlesticks.
+3. **Custom Checks**:
+    - Certain payment methods may have specific constraints. For example:
+        - **CASH_ON_DELIVERY**: Validates that the `courier` field is one of the allowed values (`YAMATO`, `SAGAWA`).
+        - **BANK_TRANSFER**: Ensures that the `bankDetails` field is an object containing `bankName` and `bankAccount`.
+
+4. **Error Handling**:
+    - If any validation step fails, the system returns an error response detailing the missing or invalid field and the specific rule violated.
+
+  
+
 
 
 

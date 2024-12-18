@@ -1,6 +1,5 @@
 package org.anymind.ecommerce.pos.entity
 
-import com.fasterxml.jackson.databind.JsonNode
 import io.r2dbc.postgresql.codec.Json
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
